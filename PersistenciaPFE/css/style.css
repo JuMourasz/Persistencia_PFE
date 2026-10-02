@@ -1,0 +1,614 @@
+/* ===== RESET & BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-fundo: #060d1a;
+  --azul-medio: #0e1e33;
+  --azul-card: #122640;
+  --azul-borda: #1f3f63;
+  --azul-neon: #3da9fc;
+  --azul-claro: #8ecae6;
+  --texto: #e6f1ff;
+  --texto-suave: #7ba3c9;
+  --verde: #4ade80;
+  --vermelho: #f87171;
+  --amarelo: #fbbf24;
+  --sombra: 0 20px 40px rgba(0, 0, 0, 0.55);
+}
+
+body {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  background: radial-gradient(ellipse at top, #0f2440 0%, #060d1a 70%);
+  min-height: 100vh;
+  color: var(--texto);
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+}
+
+/* ===== CÉU ESTRELADO ===== */
+.ceu {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.estrela {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: cintilar 3s infinite ease-in-out;
+}
+
+.estrela:nth-child(1) { top: 12%; left: 18%; animation-delay: 0s; }
+.estrela:nth-child(2) { top: 25%; left: 82%; animation-delay: 0.6s; }
+.estrela:nth-child(3) { top: 68%; left: 8%;  animation-delay: 1.2s; }
+.estrela:nth-child(4) { top: 80%; left: 90%; animation-delay: 1.8s; }
+.estrela:nth-child(5) { top: 45%; left: 55%; animation-delay: 2.4s; }
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.mapa-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 780px;
+  background: linear-gradient(160deg, var(--azul-medio) 0%, var(--azul-fundo) 100%);
+  border: 1px solid var(--azul-borda);
+  border-radius: 32px;
+  padding: 28px;
+  box-shadow:
+    var(--sombra),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  backdrop-filter: blur(8px);
+}
+
+/* ===== HEADER ===== */
+.mapa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titulo-icone {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 12px var(--azul-neon));
+}
+
+.mapa-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #fff, var(--azul-claro));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitulo {
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.btn-atualizar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1a3d5e, #122640);
+  color: var(--azul-claro);
+  border: 1px solid var(--azul-borda);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-atualizar:hover {
+  color: #fff;
+  border-color: var(--azul-neon);
+  box-shadow: 0 0 20px rgba(61, 169, 252, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-atualizar:active {
+  transform: translateY(0);
+}
+
+.btn-icone {
+  font-size: 1.1rem;
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+.btn-atualizar:hover .btn-icone {
+  transform: rotate(180deg);
+}
+
+/* ===== CARTÃO GPS ===== */
+.gps-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 24px;
+  background: linear-gradient(145deg, #0a1c33, #071523);
+  border: 1px solid var(--azul-borda);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 2px 12px rgba(0, 0, 0, 0.6),
+    0 8px 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.gps-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--azul-neon), transparent);
+  opacity: 0.6;
+}
+
+.gps-radar {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radar-pulso {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(61, 169, 252, 0.4) 0%, transparent 70%);
+  animation: pulso 2s infinite ease-out;
+}
+
+.radar-icone {
+  font-size: 1.9rem;
+  filter: drop-shadow(0 0 10px var(--azul-neon));
+  z-index: 1;
+}
+
+.gps-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.gps-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  font-weight: 500;
+}
+
+.gps-valor {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--texto);
+  letter-spacing: 0.5px;
+  word-break: break-all;
+  text-shadow: 0 0 12px rgba(61, 169, 252, 0.4);
+}
+
+.gps-status {
+  font-size: 0.78rem;
+  color: var(--azul-claro);
+  opacity: 0.85;
+  font-style: italic;
+}
+
+/* ===== ÚLTIMA LOCALIZAÇÃO ===== */
+.ultima-local {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(18, 38, 64, 0.6);
+  border: 1px dashed var(--azul-borda);
+  border-radius: 16px;
+  font-size: 0.9rem;
+  color: var(--azul-claro);
+  transition: all 0.3s ease;
+}
+
+.ultima-local.ativa {
+  border-style: solid;
+  border-color: var(--azul-neon);
+  background: rgba(61, 169, 252, 0.08);
+  color: var(--texto);
+}
+
+.ultima-icone {
+  font-size: 1.3rem;
+}
+
+.ultima-texto {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ultima-texto strong {
+  font-family: "JetBrains Mono", monospace;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ===== BARRA DE BUSCA ===== */
+.busca-wrapper {
+  position: relative;
+}
+
+.busca-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 18px;
+  background: linear-gradient(145deg, #0a1c33, #071523);
+  border: 1px solid var(--azul-borda);
+  border-radius: 999px;
+  transition: all 0.25s ease;
+}
+
+.busca-form:focus-within {
+  border-color: var(--azul-neon);
+  box-shadow: 0 0 0 4px rgba(61, 169, 252, 0.12);
+}
+
+.busca-icone {
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.busca-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 10px 4px;
+}
+
+.busca-input::placeholder {
+  color: var(--texto-suave);
+}
+
+.busca-btn {
+  background: linear-gradient(135deg, #3da9fc, #1a6bb8);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
+}
+
+.busca-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(61, 169, 252, 0.4);
+}
+
+.busca-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Resultados da busca */
+.busca-resultados {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: linear-gradient(145deg, #0e1e33, #071523);
+  border: 1px solid var(--azul-borda);
+  border-radius: 18px;
+  padding: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 50;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+  display: none;
+}
+
+.busca-resultados.aberto {
+  display: block;
+}
+
+.busca-resultados li {
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--azul-claro);
+  transition: all 0.15s ease;
+  line-height: 1.35;
+}
+
+.busca-resultados li:hover {
+  background: rgba(61, 169, 252, 0.15);
+  color: #fff;
+}
+
+.busca-resultados li strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.busca-resultados li small {
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+/* ===== MAPA ===== */
+.mapa-wrapper {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--azul-borda);
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.mapa-leaflet {
+  width: 100%;
+  height: 340px;
+  background: #0a1c33;
+  z-index: 1;
+}
+
+/* Ajusta o tema do Leaflet para combinar com o site */
+.leaflet-container {
+  background: #0a1c33;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.leaflet-control-zoom a {
+  background: #122640 !important;
+  color: var(--azul-claro) !important;
+  border-color: var(--azul-borda) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #1a3d5e !important;
+  color: #fff !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(10, 20, 36, 0.8) !important;
+  color: var(--texto-suave) !important;
+  font-size: 0.65rem !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--azul-neon) !important;
+}
+
+/* Popup */
+.leaflet-popup-content-wrapper {
+  background: #0e1e33;
+  color: var(--texto);
+  border: 1px solid var(--azul-borda);
+  border-radius: 12px;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.leaflet-popup-tip {
+  background: #0e1e33;
+  border: 1px solid var(--azul-borda);
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.leaflet-popup-content strong {
+  color: var(--azul-neon);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.leaflet-popup-close-button {
+  color: var(--texto-suave) !important;
+}
+
+/* ===== ZONA DRAG & DROP ===== */
+.zona-drag {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 20px;
+  background: radial-gradient(circle at 50% 50%, rgba(61, 169, 252, 0.06), transparent 70%);
+  border-radius: 20px;
+  border: 1px solid rgba(31, 63, 99, 0.5);
+  min-height: 120px;
+}
+
+.papel {
+  font-size: 3.4rem;
+  cursor: grab;
+  user-select: none;
+  line-height: 1;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.6));
+  transform: rotate(-6deg);
+  display: inline-block;
+}
+
+.papel:hover {
+  transform: rotate(-2deg) scale(1.08);
+}
+
+.papel:active {
+  cursor: grabbing;
+}
+
+.papel.arrastando {
+  opacity: 0.35;
+  transform: rotate(-12deg) scale(0.95);
+}
+
+.trilha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+}
+
+.trilha-linha {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--azul-borda) 0,
+    var(--azul-borda) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.trilha-dica {
+  font-size: 0.7rem;
+  color: var(--texto-suave);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lixeira {
+  font-size: 3.4rem;
+  user-select: none;
+  line-height: 1;
+  transition: transform 0.25s ease, filter 0.25s ease;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.6));
+  display: inline-block;
+}
+
+.lixeira.ativa {
+  transform: scale(1.25);
+  filter: drop-shadow(0 0 22px var(--amarelo));
+}
+
+/* ===== FOOTER ===== */
+.mapa-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+  letter-spacing: 1px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(31, 63, 99, 0.4);
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: linear-gradient(135deg, #1a3d5e, #0e1e33);
+  color: #fff;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid var(--azul-neon);
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(61, 169, 252, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 90vw;
+}
+
+.toast.visivel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 560px) {
+  .mapa-container {
+    padding: 20px 16px;
+    border-radius: 24px;
+  }
+
+  .gps-valor {
+    font-size: 1.05rem;
+  }
+
+  .mapa-leaflet {
+    height: 260px;
+  }
+
+  .zona-drag {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .trilha {
+    display: none;
+  }
+
+  .papel,
+  .lixeira {
+    font-size: 2.9rem;
+  }
+
+  .busca-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+}

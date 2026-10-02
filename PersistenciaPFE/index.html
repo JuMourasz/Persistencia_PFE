@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🗺️ Mini GPS · Localização Real</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Leaflet (mapa) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animacoes.css" />
+</head>
+<body>
+  <div class="ceu">
+    <div class="estrela"></div>
+    <div class="estrela"></div>
+    <div class="estrela"></div>
+    <div class="estrela"></div>
+    <div class="estrela"></div>
+  </div>
+
+  <main class="mapa-container">
+    <!-- Cabeçalho -->
+    <header class="mapa-header">
+      <div class="titulo-grupo">
+        <span class="titulo-icone">🛰️</span>
+        <div>
+          <h1>Mini GPS</h1>
+          <p class="subtitulo">Rastreamento em tempo real</p>
+        </div>
+      </div>
+      <button class="btn-atualizar" id="btnAtualizar" title="Buscar localização novamente">
+        <span class="btn-icone">⟳</span>
+        <span>Atualizar</span>
+      </button>
+    </header>
+
+    <!-- Cartão GPS -->
+    <section class="gps-card" id="gpsCard">
+      <div class="gps-radar">
+        <span class="radar-pulso"></span>
+        <span class="radar-icone">📍</span>
+      </div>
+
+      <div class="gps-info">
+        <span class="gps-label">Sua localização atual</span>
+        <span class="gps-valor" id="coordsDisplay">--, --</span>
+        <span class="gps-status" id="statusMsg">Aguardando sinal…</span>
+      </div>
+    </section>
+
+    <!-- Última localização salva -->
+    <section class="ultima-local" id="ultimaLocal">
+      <span class="ultima-icone">💾</span>
+      <span class="ultima-texto" id="ultimaTexto">
+        Nenhuma localização salva ainda.
+      </span>
+    </section>
+
+    <!-- Barra de busca -->
+    <section class="busca-wrapper">
+      <form class="busca-form" id="buscaForm" autocomplete="off">
+        <span class="busca-icone">🔎</span>
+        <input
+          type="text"
+          id="buscaInput"
+          class="busca-input"
+          placeholder="Pesquisar um endereço, cidade ou CEP…"
+          aria-label="Pesquisar localização"
+        />
+        <button type="submit" class="busca-btn" id="buscaBtn">Buscar</button>
+      </form>
+      <ul class="busca-resultados" id="buscaResultados"></ul>
+    </section>
+
+    <!-- Mapa -->
+    <section class="mapa-wrapper">
+      <div id="mapaLeaflet" class="mapa-leaflet" aria-label="Mapa da sua localização"></div>
+    </section>
+
+    <!-- Zona de Drag & Drop -->
+    <section class="zona-drag" id="zonaDrag">
+      <div class="papel" id="papel" draggable="true" title="Arraste-me até a lixeira">
+        📄
+      </div>
+
+      <div class="trilha">
+        <span class="trilha-linha"></span>
+        <span class="trilha-dica">arraste até a lixeira →</span>
+      </div>
+
+      <div class="lixeira" id="lixeira" title="Solte o papel aqui para limpar">
+        🗑️
+      </div>
+    </section>
+
+    <footer class="mapa-footer">
+      <span>🔒 Dados salvos apenas no seu navegador</span>
+    </footer>
+  </main>
+
+  <!-- Toast de feedback -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Leaflet -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <!-- Scripts próprios (ordem importa!) -->
+  <script src="js/storage.js"></script>
+  <script src="js/geolocalizacao.js"></script>
+  <script src="js/mapa.js"></script>
+  <script src="js/dragdrop.js"></script>
+</body>
+</html>
